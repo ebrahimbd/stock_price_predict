@@ -10,28 +10,34 @@ const puppeteer = require('puppeteer');
 const URL = process.env.URL;
 const port = process.env.Port;
 
+// Start the server
+// app.listen(port, () => {
+//     console.log(`Server is running on http://localhost:${port}`);
+// });
 
+const cookies = [
+    process.env.COOKIE1,
+    process.env.COOKIE2,
+    process.env.COOKIE3,
+    process.env.COOKIE4,
+    process.env.COOKIE5,
+    process.env.COOKIE6,
+    process.env.COOKIE7,
+    process.env.COOKIE8,
+    process.env.COOKIE9,
+    process.env.COOKIE10,
+];
 // Function to fetch data based on parameters and cookies, and save as JSON
-async function fetchDataAndSave(symbol, fromTimestamp, toTimestamp, headers, res) {
+async function fetchDataAndSave(symbol, fromTimestamp, toTimestamp) {
 
-    const url = `${URL}history?symbol=${symbol}&resolution=D&from=${fromTimestamp}&to=${toTimestamp}&dataType=0`;
-  
-    // const cookies = [
-    // process.env.COOKIE1,
-    // process.env.COOKIE2,
-    // process.env.COOKIE3,
-    // process.env.COOKIE4,
-    // process.env.COOKIE5,
-    // process.env.COOKIE6,
-    // process.env.COOKIE7,
-    // process.env.COOKIE8,
-    // process.env.COOKIE9,
-    // process.env.COOKIE10,
-    // ];
+    //  const url = `${URL}history?symbol=${symbol}&resolution=D&from=${fromTimestamp}&to=${toTimestamp}&dataType=0`;
+    // console.log(url);
+
     // const browser = await puppeteer.launch({ headless: false });
     // const page = await browser.newPage();
-    // const domain = process.env.Domain;
+    const domain = process.env.Domain;
 
+    // // Convert cookies to the correct format
     // const cookieObjects = cookies.map(cookieString => {
     //     const [name, ...rest] = cookieString.split('=');
     //     const value = rest.join('=').split(';')[0];
@@ -43,36 +49,55 @@ async function fetchDataAndSave(symbol, fromTimestamp, toTimestamp, headers, res
     //     };
     // });
 
+    // console.log(cookieObjects);
+
+    // // Validate cookie fields
     // for (const cookie of cookieObjects) {
     //     if (!cookie.name || !cookie.value || !cookie.domain || !cookie.path) {
     //         console.error('Invalid cookie fields:', cookie);
     //         return;
     //     }
     // }
+
+    // // Set cookies
     // await page.setCookie(...cookieObjects);
+
+    // // Navigate to the URL
     // await page.goto(url, { waitUntil: 'networkidle2' });
 
+    // // Scrape the data
     // const scrapedData = await page.evaluate(() => {
     //     return document.body.innerText; // Change to appropriate selector and data extraction logic
     // });
 
     // console.log(scrapedData);
-    
+
     try {
- 
-        // const response = await axios.get(url, {
-        //     headers: {
-        //         'Cookie': cookies.join('; ')// Set cookies here
-        //     }
-        // });
+        // Construct the URL with parameters
+        const url = `${URL}history?symbol=EGEN&resolution=D&from=${fromTimestamp}&to=${toTimestamp}&dataType=0`;
+        // Define your cookies
+        // Get cookies from environment variables
+        const cookies = [
+            process.env.COOKIE1,
+            process.env.COOKIE2,
+            process.env.COOKIE3,
+            process.env.COOKIE4,
+            process.env.COOKIE5,
+            process.env.COOKIE6,
+            process.env.COOKIE7,
+            process.env.COOKIE8,
+            process.env.COOKIE9,
+            process.env.COOKIE10,
+        ];
 
+        // Make HTTP GET request using Axios with cookies in headers
         const response = await axios.get(url, {
-                headers: headers
-            });
+            headers: {
+                'Cookie': cookies.join('; ')// Set cookies here
+            }
+        });
 
-       console.log(response.data);
-
-        const newFolderPath = path.join(__dirname, '../save_file/json_data');
+        const newFolderPath = path.join(__dirname, 'save_file/json_data');
         fs.mkdirSync(newFolderPath, { recursive: true });
         // Save response data as JSON file
         const jsonData = response.data;
@@ -80,26 +105,25 @@ async function fetchDataAndSave(symbol, fromTimestamp, toTimestamp, headers, res
         const outputPath = path.join(newFolderPath, fileName);
 
         fs.writeFileSync(outputPath, JSON.stringify(jsonData, null, 2));
-        
-        await convart_excel(symbol, file_read(symbol, false, true))
+        console.log(`Data saved as JSON to: ${outputPath}`);
 
-        res.status(200).json({ message: 'Stock updated successfully' + `Data saved as JSON to: ${outputPath}` });
     } catch (error) {
         if (error.response) {
-            res.status(500).json({
-                'Request failed with status code:': error.response.status,
-                'Response data': error.response.data
-            });
+            // The request was made and the server responded with a status code
+            console.error('Request failed with status code:', error.response.status);
+            console.error('Response data:', error.response.data);
         } else if (error.request) {
-            res.status(500).json({ message: error.request });
+            // The request was made but no response was received
+            console.error('No response received:', error.request);
         } else {
-            res.status(500).json({ error: 'Internal server error' });
+            // Something happened in setting up the request that triggered an error
+            console.error('Error setting up the request:', error.message);
         }
     }
 }
 
 function file_read(symbol, bool, res) {
-    const filePath = path.join(__dirname, '../save_file/json_data');
+    const filePath = path.join(__dirname, 'save_file/json_data');
     const fileName = `${symbol}.json`;
     const outputPath = path.join(filePath, fileName);
     const jsonData = fs.readFileSync(outputPath, 'utf8');
@@ -112,18 +136,27 @@ function file_read(symbol, bool, res) {
     }
 }
 
-async function get_stock_json_file(symbol, fromTimestamp, toTimestamp) {
+async function test(symbol, fromTimestamp, toTimestamp) {
     const stockData = file_read(symbol, false, true);
     // Convert to Date objects
     const fromDate = new Date(fromTimestamp * 1000); // Multiply by 1000 to convert to milliseconds
     const toDate = new Date(toTimestamp * 1000);
+    const index = 0;
+    const openPrice = stockData.o[index];
+    const closePrice = stockData.c[index];
+    const volume = stockData.v[index];
+
+    console.log(`Open Price: ${openPrice}`);
+    console.log(`Close Price: ${closePrice}`);
+    console.log(`Volume: ${volume}`);
+
     // Format the dates
     const options = { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric' };
     const fromDateString = fromDate.toLocaleString(undefined, options);
     const toDateString = toDate.toLocaleString(undefined, options);
-    // console.log(`From: ${fromDateString}`);
-    // console.log(`To: ${toDateString}`);
-    return stockData
+
+    console.log(`From: ${fromDateString}`);
+    console.log(`To: ${toDateString}`);
 
 }
 
@@ -168,7 +201,7 @@ async function convart_excel(symbol, stockData) {
     };
 
     // Path to the new folder where the Excel file will be saved
-    const folderPath = path.join(__dirname, '../save_file');
+    const folderPath = path.join(__dirname, 'save_file');
 
     // Ensure the directory exists or create it
     fs.mkdirSync(folderPath, { recursive: true });
@@ -199,7 +232,7 @@ function readStockNamesFromExcel(filePath) {
     return data.map(row => row.Name);
 }
 
-const symbols = readStockNamesFromExcel(path.join(__dirname, '../stock_name.xlsx'));
+const symbols = readStockNamesFromExcel(path.join(__dirname, 'stock_name.xlsx'));
 
 async function main() {
     // const symbols = [
@@ -233,7 +266,7 @@ async function main() {
     // for (const symbol of symbols) {
     //     await fetchDataAndSave(symbol, fromTimestamp, toTimestamp);
     //     await convart_excel(symbol, file_read(symbol, false, true))
-    //     await get_stock_json_file(symbol, fromTimestamp, toTimestamp)
+    //     await test(symbol, fromTimestamp, toTimestamp)
     // }
 
     // for (const symbol of symbols) {
@@ -242,76 +275,14 @@ async function main() {
     //     console.log("Done ----> "+symbol)
     //     await new Promise(resolve => setTimeout(resolve, 200)); // Sleep for 5 seconds between requests
     // }
+    for (const symbol of symbols) {
+        // await fetchDataAndSave(symbol, fromTimestamp, toTimestamp);
+        // await convart_excel(symbol, file_read(symbol, false, true))
+        console.log("Done ----> " + symbol)
+        await new Promise(resolve => setTimeout(resolve, 12)); // Sleep for 5 seconds between requests
+    }
 
 }
 
-function checkNameExists(name) {
-    return symbols.includes(name);
-}
 
-const processInput = async (req, res) => {
-    const { Name, fromTimestamp, toTimestamp } = req.query;
-    const name = Name.toUpperCase();
-    var Data = {}
-    if (checkNameExists(name)) {
-        Data = await get_stock_json_file(name)
-    } else {
-        res.status(200).json({ message: 'Invalid Stock Name' });
-    }
-    try {
-        res.status(200).json({ message: 'Data fetched and saved successfully.', Data: Data });
-    } catch (error) {
-        console.error('Error fetching or saving data:', error);
-        res.status(500).json({ error: 'Internal server error' });
-    }
-};
-
-const stock_name = async (req, res) => {
-    const { Name } = req.query;
-    const name = Name.toUpperCase();
-    let Data = {};
-
-    if (checkNameExists(name)) {
-        res.status(200).json({ message: 'Stock available in DSE BD', Data: Data });
-    } else {
-        res.status(200).json({ message: 'Invalid Stock Name' });
-    }
-};
-
-const all_stock_name = async (req, res) => {
-    try {
-        res.status(200).json({ message: 'Data fetched successfully.', Data: symbols });
-    } catch (error) {
-        console.error('Error fetching or saving data:', error);
-        res.status(500).json({ error: 'Internal server error' });
-    }
-};
-
-
-const update_stock = async (req, res) => {
-    const { Name, fromTimestamp, toTimestamp, COOKIE1, COOKIE2, COOKIE3, COOKIE4, COOKIE5, COOKIE6, COOKIE7, COOKIE8 } = req.query;
-    // Construct the cookies object from query parameters
-    const cookies = {
-        COOKIE1: COOKIE1 || '',
-        COOKIE2: COOKIE2 || '',
-        COOKIE3: COOKIE3 || '',
-        COOKIE4: COOKIE4 || '',
-        COOKIE5: COOKIE5 || '',
-        COOKIE6: COOKIE6 || '',
-        COOKIE7: COOKIE7 || '',
-        COOKIE8: COOKIE8 || '',
-    };
-    // Prepare request headers with cookies
-    const headers = {
-        'Port': '4000',
-        'Domain': 'ost.ecosoftbd.com',
-        'Cookie': Object.values(cookies).join('; ')
-    };
-    await fetchDataAndSave(Name, fromTimestamp, toTimestamp, headers, res);
-};
-
-
-
-module.exports = {
-    processInput, stock_name, all_stock_name, update_stock
-};
+main()

@@ -5,8 +5,12 @@ const specs = require('../swagger');
 
 const dataController = require('../controllers/dataController');
 
-// GET /api/input
-router.get('/input', dataController.processInput);
+
+router.get('/stock_name', dataController.stock_name);
+router.get('/all_stock_name', dataController.all_stock_name);
+router.get('/info', dataController.processInput);
+router.post('/update_stock', dataController.update_stock);
+
 
 // GET /api/
 router.get('/', (req, res) => {

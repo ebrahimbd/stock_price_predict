@@ -5,43 +5,194 @@ info:
   description: API documentation generated with Swagger for Stock Price Prediction
 
 paths:
-  /:
+  /stock_name:
+      get:
+        tags:
+          - Checks stock name is available in Dhaka Stock Exchange (DSE) Bangladesh (BD)
+        summary: Check if a stock name is valid
+        description: Checks if the given stock name is available in DSE BD.
+        parameters:
+          - name: Name
+            in: query
+            required: true
+            type: string
+            example: BSC
+            description: The stock symbol to check
+        responses:
+          200:
+            description: Valid or invalid stock name
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: Stock available in DSE BD
+                Data:
+                  type: object
+                  description: Additional data about the stock (if available)
+                  example: {}
+          400:
+            description: Invalid request
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: Invalid Stock Name
+  /all_stock_name:
+      get:
+        tags:
+          - Get all stock names available in DSE BD
+        summary: Get all stock names available in DSE BD
+        description: Retrieves all stock names available in DSE BD.
+        responses:
+          200:
+            description: List of all stock names
+            schema:
+              type: array
+              items:
+                type: string
+              example: ["EGEN", "ACI", "BSC"]
+          400:
+            description: Invalid request
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: Error fetching stock names
+  /info:
     get:
       tags:
-        - Swagger UI
-      summary: Redirect to Swagger UI
-      description: Redirects to Swagger UI for API documentation.
-      responses:
-        '302':
-          description: Redirect to /api-docs
-
-  /input:
-    get:
-      tags:
-        - Stock name
-      summary: Process input
-      description: Endpoint to process input data.
+        - Checks Stock information available in DSE BD
+      summary: Stock information available in DSE BD
+      description: Endpoint to Stock information data available in DSE BD.
       parameters:
         - in: query
-          name: symbol
+          name: Name
           schema:
             type: string
+            example: BSC
           required: true
           description: Stock symbol name (e.g., EGEN)
-        - in: query
-          name: fromTimestamp
-          schema:
-            type: integer
-            format: int32
-          required: true
-          description: Start timestamp in seconds since Unix epoch
-        - in: query
-          name: toTimestamp
-          schema:
-            type: integer
-            format: int32
-          required: true
-          description: End timestamp in seconds since Unix epoch
+        # - in: query
+        #   name: fromTimestamp
+        #   schema:
+        #     type: integer
+        #     format: int32
+        #   required: true
+        #   description: Start timestamp in seconds since Unix epoch
+        # - in: query
+        #   name: toTimestamp
+        #   schema:
+        #     type: integer
+        #     format: int32
+        #   required: true
+        #   description: End timestamp in seconds since Unix epoch
       responses:
         '200':
           description: Successful response
+
+  /update_stock:
+    post:
+      tags:
+        - Update stock information according to the specified timeline in DSE BD
+      summary: Update Stock Information
+      description: |
+        Endpoint to update stock information using provided inputs.
+      parameters:
+        - name: Name
+          in: query
+          description: name for the stock
+          required: true
+          schema:
+            type: string
+            example: BSC
+
+        - name: fromTimestamp
+          in: query
+          description: Start timestamp for the update range
+          required: true
+          schema:
+            type: string
+            example: 1356998400
+        - name: toTimestamp
+          in: query
+          description: End timestamp for the update range
+          required: true
+          schema:
+            type: string
+            example: 1720123590
+
+        - name: COOKIE1
+          in: query
+          description: Cookie 1
+          required: true
+          schema:
+            type: string
+            example: .ASPXAUTH=270E8F8AC57A465C1C34B52C9BB3B9D3876B5ADD1896884E411202D23232BFBF94B5F116D1B15D6906CBA0A5449DD8253CC8F146A32BAA6A2313D959AC9EBEFD6508BED876A310D26629513699A945E497D6A0D9EE8FD53F3644329C3D424230E2F266123C33105BE637369DA8E22A3B71ED8A5F332FBBD98AA3D9843ECEBB8B32354F42F78341BFC5AA17124A275D90BEEDE668BDF2B29F; Path=/; HttpOnly;
+
+        - name: COOKIE2
+          in: query
+          description: Cookie 2
+          required: true
+          schema:
+            type: string
+            example: CoreAuth=CfDJ8CjnUl4361VFrtx2tu73DRFHiI0x5tipEQyEpdI_7YVYoM_6mGJ-L3GVZlBYNmBiOsW2yEez_W8aKFkWltaJWRdrJkMUg9LvFelVFR6BTpmIsSg1GQRytbhszYyucrP6gS8d-P0kN1y8psUn12DKlDLxo8xdIyIs6siRaCFcXu_pphNXEfcdoN8-MFIMMrYDRZifxDEXQqTz_R6wWuOGNcjA7MG6z9nKr1rbg-DT1KS1YdlIHKjlFP9JPmtm2w5thYEEtAampjVB8VendVaVTF8bpmh2xPqEyuAAj4LXBcvFDNXFNKxv6ta8NPVbd5uOxWNZCaRRw8-rCHsxpMN7R2I; Path=/;
+
+        - name: COOKIE3
+          in: query
+          description: Cookie 3
+          required: true
+          schema:
+            type: string
+            example: LastLoginId=saleh.sust.bd; Path=/;
+        - name: COOKIE4
+          in: query
+          description: Cookie 4
+          required: false
+          schema:
+            type: string
+            example: LastUserName=saleh.sust.bd [Ebrahim Mohammad Saleh]; Path=/;
+
+        - name: COOKIE5
+          in: query
+          description: Cookie 5
+          required: false
+          schema:
+            type: string
+            example: tz=360; Path=/;
+ 
+        - name: COOKIE6
+          in: query
+          description: Cookie 6
+          required: false
+          schema:
+            type: string
+            example: exp=360; Path=/;
+
+        - name: COOKIE7
+          in: query
+          description: Cookie 7
+          required: false
+          schema:
+            type: string
+            example: exp=360; Path=/; 
+
+        - name: COOKIE8
+          in: query
+          description: Cookie 8
+          required: false
+          schema:
+            type: string
+            example: exp=360; Path=/;
+
+      responses:
+        '200':
+          description: Stock updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+        '500':
+          description: Internal server error
