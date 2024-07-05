@@ -5,6 +5,7 @@ const xlsx = require('xlsx');
 const axios = require('axios');
 const { json } = require('stream/consumers');
 require('dotenv').config();
+const puppeteer = require('puppeteer');
 
 const URL = process.env.URL;
 const port = process.env.Port;
@@ -22,13 +23,65 @@ app.use('/', require('./routes/api'));
 //     console.log(`Server is running on http://localhost:${port}`);
 // });
 
-
+const cookies = [
+    process.env.COOKIE1,
+    process.env.COOKIE2,
+    process.env.COOKIE3,
+    process.env.COOKIE4,
+    process.env.COOKIE5,
+    process.env.COOKIE6,
+    process.env.COOKIE7,
+    process.env.COOKIE8,
+    process.env.COOKIE9,
+    process.env.COOKIE10,
+];
 // Function to fetch data based on parameters and cookies, and save as JSON
 async function fetchDataAndSave(symbol, fromTimestamp, toTimestamp) {
+
+    //  const url = `${URL}history?symbol=${symbol}&resolution=D&from=${fromTimestamp}&to=${toTimestamp}&dataType=0`;
+    // console.log(url);
+
+    // const browser = await puppeteer.launch({ headless: false });
+    // const page = await browser.newPage();
+
+    // // Convert cookies to the correct format
+    // const cookieObjects = cookies.map(cookieString => {
+    //     const [name, ...rest] = cookieString.split('=');
+    //     const value = rest.join('=').split(';')[0];
+    //     return {
+    //         name: name.trim(),
+    //         value: value.trim(),
+    //         domain: 'ost.ecosoftbd.com', // Ensure the domain matches the target URL
+    //         path: '/', // Adjust path as necessary
+    //     };
+    // });
+
+    // console.log(cookieObjects);
+
+    // // Validate cookie fields
+    // for (const cookie of cookieObjects) {
+    //     if (!cookie.name || !cookie.value || !cookie.domain || !cookie.path) {
+    //         console.error('Invalid cookie fields:', cookie);
+    //         return;
+    //     }
+    // }
+
+    // // Set cookies
+    // await page.setCookie(...cookieObjects);
+
+    // // Navigate to the URL
+    // await page.goto(url, { waitUntil: 'networkidle2' });
+
+    // // Scrape the data
+    // const scrapedData = await page.evaluate(() => {
+    //     return document.body.innerText; // Change to appropriate selector and data extraction logic
+    // });
+
+    // console.log(scrapedData);
+
     try {
         // Construct the URL with parameters
         const url = `${URL}history?symbol=EGEN&resolution=D&from=${fromTimestamp}&to=${toTimestamp}&dataType=0`;
-        console.log(url)
         // Define your cookies
         // Get cookies from environment variables
         const cookies = [
@@ -50,7 +103,7 @@ async function fetchDataAndSave(symbol, fromTimestamp, toTimestamp) {
                 'Cookie': cookies.join('; ')// Set cookies here
             }
         });
-        console.log(response)
+
         const newFolderPath = path.join(__dirname, 'save_file/json_data');
         fs.mkdirSync(newFolderPath, { recursive: true });
         // Save response data as JSON file
@@ -177,20 +230,57 @@ function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+// Function to read stock names from an Excel file
+function readStockNamesFromExcel(filePath) {
+    const workbook = xlsx.readFile(filePath);
+    const sheetName = workbook.SheetNames[0];
+    const worksheet = workbook.Sheets[sheetName];
+    const data = xlsx.utils.sheet_to_json(worksheet);
+    return data.map(row => row.Name);
+}
+
+const symbols = readStockNamesFromExcel(path.join(__dirname, 'stock_name.xlsx'));
+
 async function main() {
-const symbols = [
-    'EGEN'
- 
-];
+    // const symbols = [
+    // 'DOREENPWR',
+    // 'NAVANAPHAR',
+    // 'NPOLYMER',
+    // 'AMANFEED',
+    // 'ACMELAB',
+    // 'SQUARETEXT',
+    // 'RENATA',
+    // 'BSCPLC',
+    // 'KDSALTD',
+    // 'SUMITPOWER',
+    // 'CROWNCEMNT',
+    // 'ROBI',
+    // 'SINOBANGLA',
+    // 'BXPHARMA',
+    // 'BSC',
+    // 'OLYMPIC',
+    // 'AAMRANET',
+    // 'BPML',
+    // 'EGEN',
+    // 'LHBL',
+    // 'SQURPHARM',
+    // 'UPGDCL',
+    // 'AAMRATECH'
+    // ];
     const fromTimestamp = 1356998400; // Replace with your desired from timestamp
     const toTimestamp = 1720123590;   // Replace with your desired to timestamp
 
-    for (const symbol of symbols) {
+    // for (const symbol of symbols) {
+    //     await fetchDataAndSave(symbol, fromTimestamp, toTimestamp);
+    //     await convart_excel(symbol, file_read(symbol, false, true))
+    //     await test(symbol, fromTimestamp, toTimestamp)
+    // }
 
-        await fetchDataAndSave( 'EGEN', fromTimestamp, toTimestamp);
-      
-        // await convart_excel(symbol, file_read(symbol, false, true))
-        // await test(symbol, fromTimestamp, toTimestamp)
+    for (const symbol of symbols) {
+        await fetchDataAndSave(symbol, fromTimestamp, toTimestamp);
+        await convart_excel(symbol, file_read(symbol, false, true))
+        console.log("Done ----> "+symbol)
+        await new Promise(resolve => setTimeout(resolve, 200)); // Sleep for 5 seconds between requests
     }
 
 }
