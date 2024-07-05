@@ -1,0 +1,28 @@
+# Logs
+logs
+*.log
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+# Directory for storing build artifacts
+dist
+
+# Directory for storing dependencies
+node_modules
+/node_modules
+./node_modules
+
+# .env file with sensitive information
+.env
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+
+# Linux
+*.swp

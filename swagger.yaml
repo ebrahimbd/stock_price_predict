@@ -1,0 +1,47 @@
+openapi: 3.0.0
+info:
+  title: Stock Price Prediction API Documentation
+  version: 1.0.0
+  description: API documentation generated with Swagger for Stock Price Prediction
+
+paths:
+  /:
+    get:
+      tags:
+        - Swagger UI
+      summary: Redirect to Swagger UI
+      description: Redirects to Swagger UI for API documentation.
+      responses:
+        '302':
+          description: Redirect to /api-docs
+
+  /input:
+    get:
+      tags:
+        - Stock name
+      summary: Process input
+      description: Endpoint to process input data.
+      parameters:
+        - in: query
+          name: symbol
+          schema:
+            type: string
+          required: true
+          description: Stock symbol name (e.g., EGEN)
+        - in: query
+          name: fromTimestamp
+          schema:
+            type: integer
+            format: int32
+          required: true
+          description: Start timestamp in seconds since Unix epoch
+        - in: query
+          name: toTimestamp
+          schema:
+            type: integer
+            format: int32
+          required: true
+          description: End timestamp in seconds since Unix epoch
+      responses:
+        '200':
+          description: Successful response
