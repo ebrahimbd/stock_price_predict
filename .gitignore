@@ -16,7 +16,7 @@ node_modules
 ./node_modules
 
 /save_file
-
+/save_file_fron_marketscreener
 # macOS
 .DS_Store
 

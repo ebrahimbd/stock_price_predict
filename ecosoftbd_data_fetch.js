@@ -269,18 +269,18 @@ async function main() {
     //     await test(symbol, fromTimestamp, toTimestamp)
     // }
 
-    for (const symbol of symbols) {
-        await fetchDataAndSave(symbol, fromTimestamp, toTimestamp);
-        await convart_excel(symbol, file_read(symbol, false, true))
-        console.log("Done ----> "+symbol)
-        // await new Promise(resolve => setTimeout(resolve, 200)); // Sleep for 5 seconds between requests
-    }
     // for (const symbol of symbols) {
-    //     // await fetchDataAndSave(symbol, fromTimestamp, toTimestamp);
-    //     // await convart_excel(symbol, file_read(symbol, false, true))
-    //     console.log("Done ----> " + symbol)
-    //     await new Promise(resolve => setTimeout(resolve, 12)); // Sleep for 5 seconds between requests
+    //     await fetchDataAndSave(symbol, fromTimestamp, toTimestamp);
+    //     await convart_excel(symbol, file_read(symbol, false, true))
+    //     console.log("Done ----> "+symbol)
+    //     await new Promise(resolve => setTimeout(resolve, 200)); // Sleep for 5 seconds between requests
     // }
+    for (const symbol of symbols) {
+        // await fetchDataAndSave(symbol, fromTimestamp, toTimestamp);
+        // await convart_excel(symbol, file_read(symbol, false, true))
+        console.log("Done ----> " + symbol)
+        await new Promise(resolve => setTimeout(resolve, 12)); // Sleep for 5 seconds between requests
+    }
 
 }
 
